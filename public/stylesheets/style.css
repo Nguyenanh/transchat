@@ -1,0 +1,29 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+.container {
+  width: 100%;
+}
+.content {
+  border: 1px solid;
+  height: 300px;
+  width: 320px;
+  overflow-y: auto;
+}
+.fill {
+  width: 320px;
+}
+.fill .text {
+  height: 25px;
+  width: 260px;
+}
+.fill .submit {
+    width: 56px;
+    height: 31px;
+    text-transform: uppercase;
+}
