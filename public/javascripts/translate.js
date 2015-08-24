@@ -1,25 +1,40 @@
-function transMessage() {
-  var message  = $('.text').val();
+var socket = io();
+$(document).ready(function(){
   var content = $('.content');
-  $.ajax({
-    type : "POST",
-    url : "/translate",
-    data : { message: message },
-    success: function(data) {
-      if(data.code == 200) {
-        var tag_meg = '';
-        for(var i = 0; i< data.text.length; i++) {
-          tag_meg = '<p>'+ data.text[i]+'</p>';
-        }
-        content.append(tag_meg);
+  var lang = 'vi';
+  $('.lang').change(function() {
+    lang = $('.lang-transt').val();
+  });
+  socket.on('chat-message-on', function(data) {
+    console.log(data);
+    if(data.message.code == 200 && lang == data.lang) {
+      for(var i = 0; i< data.message.text.length; i++) {
+        content.append(addMessage(data.message.text[i]));
       }
-    },
-    complete: function() {
-      $('.text').val("");
+    }else{
+      content.append(addMessage(data.from));
     }
   });
-  return false;
+});
+
+function addMessage(text) {
+  return '<p>'+ text +'</p>';
 }
+
+function transMessage() {
+  var content = $('.content');
+  var lang = $('.lang-transt').val();
+  var message  = $('.text').val();
+  var data = {
+    lang : lang,
+    message : message
+  };
+  socket.emit('chat-message-emit', data);
+  // content.append(addMessage(message));
+  $('.text').val("");
+  return false;
+};
+
 function pressEnter(e) {
   if(e.which){
       var keycode = e.which
@@ -28,4 +43,4 @@ function pressEnter(e) {
     }
   if(keycode == 13)
     transMessage();
-}
+};

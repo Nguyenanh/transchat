@@ -4,8 +4,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var http = require('http');
 
+var filters =  require('./filters/language');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -14,6 +14,7 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -56,15 +57,15 @@ app.use(function(err, req, res, next) {
   });
 });
 
-
-// var server = app.listen(8000, function () {
-//   var host = server.address().address;
-//   var port = server.address().port;
-//   console.log('Example app listening at http://%s:%s', host, port);
-// });
-var io = require('socket.io').listen(app.listen(8000));
-
+var io = require('socket.io').listen(app.listen(3000, function () {
+  var host = this.address().address;
+  var port = this.address().port;
+  console.log('Example app listening at http://%s:%s', host, port);
+}));
 io.on('connection', function(socket){
   console.log('a user connected');
+  socket.on('chat-message-emit', function(msg) {
+    filters.vi(msg, io);
+  });
 });
 module.exports = app;
